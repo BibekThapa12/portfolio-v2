@@ -1,0 +1,35 @@
+---
+// A brand logo from Simple Icons (CC0), drawn inline in the current text colour; it takes the brand colour on hover.
+import * as icons from 'simple-icons';
+
+interface Props {
+  name: string;
+  label?: boolean;
+}
+
+const slugs: Record<string, keyof typeof icons> = {
+  React: 'siReact',
+  TypeScript: 'siTypescript',
+  JavaScript: 'siJavascript',
+  'Tailwind CSS': 'siTailwindcss',
+  'shadcn/ui': 'siShadcnui',
+  Supabase: 'siSupabase',
+  PostgreSQL: 'siPostgresql',
+  Git: 'siGit',
+  GitHub: 'siGithub',
+  'Claude Code': 'siClaude',
+  'GitHub Copilot': 'siGithubcopilot',
+};
+
+const { name, label = true } = Astro.props;
+const icon = icons[slugs[name]] as { path: string; hex: string } | undefined;
+if (!icon) throw new Error(`No logo for "${name}"`);
+// near-black brand colours would vanish in dark mode, so those fall back to the text colour
+const [r, g, b] = [0, 2, 4].map((i) => parseInt(icon.hex.slice(i, i + 2), 16));
+const brand = r * 0.299 + g * 0.587 + b * 0.114 < 60 ? 'var(--fg)' : `#${icon.hex}`;
+---
+
+<span class="logo" style={`--brand: ${brand}`}>
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d={icon.path} /></svg>
+  {label && <span>{name}</span>}
+</span>

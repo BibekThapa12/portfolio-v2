@@ -1,0 +1,189 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import { profile, intro, projects, experience, education, skillGroups, languages } from '../data/cv';
+import Logo from '../components/Logo.astro';
+
+const external = { target: '_blank', rel: 'noopener' };
+const allTools = skillGroups.flatMap((g) => g.tools);
+const shots = import.meta.glob<{ default: ImageMetadata }>('../assets/images/shots/*.png', { eager: true });
+---
+
+<Base
+  title={`${profile.name}, ${profile.role.toLowerCase()}`}
+  description="Bibek Thapa, full-stack developer in Jhapa, Nepal. React, TypeScript and Supabase. Builder of KhataERP."
+>
+  <canvas class="bg" aria-hidden="true"></canvas>
+
+  <nav aria-label="Main" class="nav">
+    <div class="wrap">
+      <a class="name" href="#top">{profile.name}</a>
+      <span>
+        <a href="#projects">Projects</a>
+        <a href="#experience">Experience</a>
+        <a href="#contact">Contact</a>
+      </span>
+    </div>
+  </nav>
+
+  <main id="top">
+    <header class="wrap hero">
+      <div>
+        <h1 data-reveal>{profile.name}. <span>{profile.role}.</span></h1>
+        <p class="lead" data-reveal>{intro}</p>
+        <p class="actions" data-reveal>
+          <a class="btn primary" href="#projects">See projects</a>
+          <a class="btn" href={profile.cv} download>Download CV</a>
+          <a class="btn" href={profile.github} {...external}>GitHub</a>
+        </p>
+      </div>
+      <div class="monogram">
+        <canvas aria-hidden="true"></canvas>
+      </div>
+    </header>
+
+    <section id="projects">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 data-reveal>Projects</h2>
+          <p data-reveal>Things I designed, built and shipped myself.</p>
+        </div>
+        <div class="projects">
+          {projects.map((p) => (
+            <article class="project" data-reveal>
+              <div class="about">
+                <h3>{p.name}</h3>
+                <p>{p.summary}</p>
+                <ul class="tags" aria-label="Built with">{p.stack.split(', ').map((t) => <li>{t}</li>)}</ul>
+                <p class="actions">
+                  {p.live && <a class="btn primary" href={p.live} {...external}>Visit {new URL(p.live).host}</a>}
+                  {p.source && <a class={p.live ? 'btn' : 'btn primary'} href={p.source} {...external}>{p.live ? 'Source' : 'View source'}</a>}
+                </p>
+              </div>
+              <a class="browser" data-cursor="View" href={p.live ?? p.source} {...external} aria-label={p.live ? `Visit ${new URL(p.live).host}` : `View the ${p.name} source on GitHub`}>
+                <span class="browser-bar" aria-hidden="true"><i></i><i></i><i></i><span>{p.frame.bar}</span></span>
+                <span class="browser-view">
+                  <Image src={shots[`../assets/images/shots/${p.frame.file}.png`].default} alt={p.frame.alt} widths={[640, 1280]} sizes="(min-width: 900px) 620px, 100vw" />
+                </span>
+              </a>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section id="experience">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 data-reveal>Experience</h2>
+          <p data-reveal>Where I've worked, most recent first.</p>
+        </div>
+        <div class="journey-wrap">
+        <span class="journey-rail" aria-hidden="true"><span class="journey-progress"></span></span>
+        <ol class="journey">
+          {experience.map((j) => (
+            <li class:list={['step', { now: j.now }]} data-reveal>
+              <span class="dot" aria-hidden="true"></span>
+              <p class="when">{j.when}{j.now && <span class="now-label">Now</span>}</p>
+              <h3>{j.title}</h3>
+              <p class="org">{j.org}</p>
+              {j.points && <ul>{j.points.map((p) => <li>{p}</li>)}</ul>}
+            </li>
+          ))}
+        </ol>
+        </div>
+      </div>
+    </section>
+
+    <section id="skills">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 data-reveal>Skills</h2>
+          <p data-reveal>The tools I reach for to take an idea to production.</p>
+        </div>
+      </div>
+      <div class="marquee" aria-hidden="true" data-reveal>
+        <div class="marquee-track">
+          {[...allTools, ...allTools].map((t) => <Logo name={t} />)}
+        </div>
+      </div>
+      <div class="wrap">
+        <div class="bento">
+          {skillGroups.map((g) => (
+            <article class:list={['tile', 'spot', { wide: g.wide }]} data-reveal>
+              <h3>{g.name}</h3>
+              <p class="note">{g.note}</p>
+              <ul class="logos">{g.tools.map((t) => <li><Logo name={t} /></li>)}</ul>
+            </article>
+          ))}
+          <article class="tile spot" data-reveal>
+            <h3>Languages</h3>
+            <p class="note">I work and write in</p>
+            <ul class="langs">{languages.map((l) => <li lang={l.name === 'English' ? 'en' : l.name === 'Nepali' ? 'ne' : 'hi'}><span>{l.native}</span>{l.native !== l.name && <small>{l.name}</small>}</li>)}</ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="education">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 data-reveal>Education</h2>
+          <p data-reveal>Where the foundations came from.</p>
+        </div>
+        <ol class="edu-grid">
+          {education.map((e) => (
+            <li class:list={['edu-card', 'spot', { featured: e.featured }]} data-reveal>
+              <span class="edu-year" aria-hidden="true">{e.when}</span>
+              <div class="edu-body">
+                <h3>{e.title}</h3>
+                <p>{e.school}</p>
+                <p class="edu-meta"><span class="visually-hidden">{e.when}</span>{e.grade && <span class="grade">Grade {e.grade}</span>}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="wrap">
+        <div class="cta" data-reveal>
+          <h2>Let's build something.</h2>
+          <p class="lead">I'm open to developer roles and freelance web projects.</p>
+          <p class="actions">
+            <a class="btn primary" href={`mailto:${profile.email}`}>Email me</a>
+            <a class="btn" href={profile.cv} download>Download CV</a>
+            <a class="btn" href={profile.linkedin} {...external}>LinkedIn</a>
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <p>© {new Date().getFullYear()} {profile.name}, {profile.location}</p>
+      <span>
+        <a href={`mailto:${profile.email}`}>{profile.email}</a>
+        <a href={profile.github} {...external}>GitHub</a>
+        <a href={profile.linkedin} {...external}>LinkedIn</a>
+      </span>
+    </div>
+  </footer>
+</Base>
+
+<script>
+  import '../scripts/motion';
+  import { startCursor } from '../scripts/cursor';
+  import { startMonogram } from '../scripts/monogram';
+
+  startCursor();
+  const mono = document.querySelector<HTMLCanvasElement>('.monogram canvas');
+  if (mono) startMonogram(mono);
+
+  // The 3D background loads after the page is ready so it never delays the first paint.
+  const canvas = document.querySelector<HTMLCanvasElement>('canvas.bg');
+  const idle = window.requestIdleCallback ?? ((cb: () => void) => setTimeout(cb, 200));
+  if (canvas) idle(() => import('../scripts/background').then((m) => m.startBackground(canvas)));
+</script>
