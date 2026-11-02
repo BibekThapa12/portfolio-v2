@@ -1,5 +1,33 @@
+# Dependencies
 node_modules/
+
+# Build output and Astro's generated types
 dist/
 .astro/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+
+# AI coding tools: skills, settings and their working files (local only, not part of the site)
+.agents/
+.claude/
+.impeccable/
 .taste-skill/
 .superpowers/
+skills-lock.json

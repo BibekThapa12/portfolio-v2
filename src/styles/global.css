@@ -61,7 +61,6 @@ h3 { font-size: 1.375rem; letter-spacing: -0.02em; line-height: 1.25; }
 p { margin: 0 0 1em; text-wrap: pretty; }
 a { color: inherit; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
-.muted { color: var(--muted); }
 .lead { font-size: clamp(1.125rem, 1rem + 0.4vw, 1.3125rem); line-height: 1.5; color: var(--muted); max-width: 36ch; }
 .wrap { max-width: 1200px; margin: 0 auto; padding-inline: 24px; }
 .section-head { margin-bottom: 48px; }
@@ -273,7 +272,6 @@ footer span { display: flex; gap: 20px; }
   .project { grid-template-columns: 1fr; }
   .project .browser { order: -1; margin: 20px 20px 0; }
   .project .about { padding: 28px 24px; }
-  .panel { padding: 28px 24px; }
   .cta { padding: 64px 20px; }
   .nav span { gap: 16px; }
 }
