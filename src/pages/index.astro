@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
-import { profile, intro, projects, experience, education, skillGroups, languages } from '../data/cv';
+import { profile, intro, projects, experience, education, skillGroups, domain, languages } from '../data/cv';
 import Logo from '../components/Logo.astro';
 
 const external = { target: '_blank', rel: 'noopener' };
@@ -110,36 +110,67 @@ const shots = import.meta.glob<{ default: ImageMetadata }>('../assets/images/sho
       <div class="wrap">
         <div class="bento">
           {skillGroups.map((g) => (
-            <article class:list={['tile', 'spot', { wide: g.wide }]} data-reveal>
+            <article class="tile spot" data-reveal>
               <h3>{g.name}</h3>
               <p class="note">{g.note}</p>
               <ul class="logos">{g.tools.map((t) => <li><Logo name={t} /></li>)}</ul>
+              <ul class="facts" aria-label={`${g.name} in KhataERP`}>{g.facts.map((x) => <li>{x}</li>)}</ul>
             </article>
           ))}
           <article class="tile spot" data-reveal>
-            <h3>Languages</h3>
-            <p class="note">I work and write in</p>
-            <ul class="langs">{languages.map((l) => <li lang={l.name === 'English' ? 'en' : l.name === 'Nepali' ? 'ne' : 'hi'}><span>{l.native}</span>{l.native !== l.name && <small>{l.name}</small>}</li>)}</ul>
+            <h3>Domain</h3>
+            <p class="note">Two years as a senior accountant, built into KhataERP</p>
+            <ul class="domain">{domain.map((d) => <li>{d}</li>)}</ul>
           </article>
+        </div>
+        <p class="langs" data-reveal>
+          <span class="langs-label">Languages</span>
+          {languages.map((l) => <span class="lang">{l.name}{l.native !== l.name && <small lang={l.name === "Nepali" ? "ne" : "hi"}>{l.native}</small>}</span>)}
+        </p>
+      </div>
+    </section>
+
+    <section id="activity">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 data-reveal>GitHub activity</h2>
+          <p class="gh-total" aria-live="polite" data-reveal>Loading live contributions from GitHub…</p>
+        </div>
+        <div class="tile gh" data-gh data-user={new URL(profile.github).pathname.slice(1)} data-reveal>
+          <div class="gh-scroll">
+            <div class="gh-months" aria-hidden="true"></div>
+            <!-- empty cells hold the layout until the live data arrives -->
+            <div class="gh-grid" role="img" aria-label="GitHub contributions calendar">{Array.from({ length: 371 }, () => <i></i>)}</div>
+          </div>
+          <div class="gh-foot">
+            <span class="gh-legend" aria-hidden="true">Less {[0, 1, 2, 3, 4].map((l) => <i data-l={l}></i>)} More</span>
+            <a class="btn" href={profile.github} {...external}>View on GitHub</a>
+          </div>
         </div>
       </div>
     </section>
 
     <section id="education">
-      <div class="wrap">
-        <div class="section-head">
-          <h2 data-reveal>Education</h2>
-          <p data-reveal>Where the foundations came from.</p>
+      <div class="wrap edu">
+        <div class="edu-side">
+          <div class="section-head">
+            <h2 data-reveal>Education</h2>
+            <p data-reveal>Where the foundations came from.</p>
+          </div>
+          <div class="edu-stat" aria-hidden="true" data-reveal>
+            <span class="edu-stat-value">{education[0].stat.value}</span>
+            <span class="edu-stat-label">{education[0].stat.label}</span>
+          </div>
         </div>
-        <ol class="edu-grid">
+        <ol class="edu-rows">
           {education.map((e) => (
-            <li class:list={['edu-card', 'spot', { featured: e.featured }]} data-reveal>
-              <span class="edu-year" aria-hidden="true">{e.when}</span>
-              <div class="edu-body">
+            <li class="edu-row" data-reveal data-stat={e.stat.value} data-stat-label={e.stat.label}>
+              <span class="edu-year">{e.when}</span>
+              <div class="edu-main">
                 <h3>{e.title}</h3>
                 <p>{e.school}</p>
-                <p class="edu-meta"><span class="visually-hidden">{e.when}</span>{e.grade && <span class="grade">Grade {e.grade}</span>}</p>
               </div>
+              <span class="edu-tag">{e.tag}</span>
             </li>
           ))}
         </ol>
@@ -148,14 +179,33 @@ const shots = import.meta.glob<{ default: ImageMetadata }>('../assets/images/sho
 
     <section id="contact">
       <div class="wrap">
-        <div class="cta" data-reveal>
-          <h2>Let's build something.</h2>
-          <p class="lead">I'm open to developer roles and freelance web projects.</p>
-          <p class="actions">
-            <a class="btn primary" href={`mailto:${profile.email}`}>Email me</a>
-            <a class="btn" href={profile.cv} download>Download CV</a>
-            <a class="btn" href={profile.linkedin} {...external}>LinkedIn</a>
-          </p>
+        <div class="contact">
+          <div>
+            <h2 data-reveal>Let's build something.</h2>
+            <p class="lead" data-reveal>I'm open to developer roles and freelance web projects. Tell me what you're working on.</p>
+            <p class="actions" data-reveal>
+              <a class="btn" href={profile.cv} download>Download CV</a>
+              <a class="btn" href={profile.linkedin} {...external}>LinkedIn</a>
+              <a class="btn" href={profile.github} {...external}>GitHub</a>
+            </p>
+          </div>
+          <!-- Works without script as a GET form to mailto; contact.ts builds a cleaner link on submit -->
+          <form class="compose" action={`mailto:${profile.email}`} method="get" data-compose data-email={profile.email} data-reveal>
+            <div class="compose-bar" aria-hidden="true"><i></i><i></i><i></i><span>New message</span></div>
+            <div class="compose-field"><span>To</span><b>{profile.email}</b></div>
+            <fieldset class="compose-field compose-reason">
+              <legend>Subject</legend>
+              {['Job opportunity', 'Freelance project', 'Just saying hi'].map((s, i) => (
+                <label><input type="radio" name="subject" value={s} checked={i === 0} /><span>{s}</span></label>
+              ))}
+            </fieldset>
+            <label class="visually-hidden" for="compose-body">Your message</label>
+            <textarea id="compose-body" name="body" rows="5" placeholder="Hi Bibek, I'd love your help with…"></textarea>
+            <div class="compose-foot">
+              <span class="compose-hint" aria-live="polite">Opens your email app with this filled in.</span>
+              <button class="btn primary" type="submit">Send</button>
+            </div>
+          </form>
         </div>
       </div>
     </section>
@@ -177,6 +227,14 @@ const shots = import.meta.glob<{ default: ImageMetadata }>('../assets/images/sho
   import '../scripts/motion';
   import { startCursor } from '../scripts/cursor';
   import { startMonogram } from '../scripts/monogram';
+  import { startContact } from '../scripts/contact';
+  import { startContributions } from '../scripts/contributions';
+
+  const gh = document.querySelector<HTMLElement>('[data-gh]');
+  if (gh) startContributions(gh);
+
+  const compose = document.querySelector<HTMLFormElement>('[data-compose]');
+  if (compose) startContact(compose);
 
   startCursor();
   const mono = document.querySelector<HTMLCanvasElement>('.monogram canvas');

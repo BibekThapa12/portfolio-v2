@@ -31,3 +31,6 @@ desktop.ini
 .taste-skill/
 .superpowers/
 skills-lock.json
+
+# Launch video output
+brag-output*/

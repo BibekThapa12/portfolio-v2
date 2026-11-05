@@ -63,18 +63,41 @@ export const experience: { when: string; title: string; org: string; points?: st
   { when: '2024 to 2025', title: 'Senior Accountant', org: 'Gaura Suppliers, Birtamod' },
 ];
 
-export const education: { when: string; title: string; school: string; grade?: string; featured?: boolean }[] = [
-  { when: '2024', title: 'Diploma in IT Engineering', school: 'Kankai Polytechnic Institute, Durgapur, Jhapa', grade: 'A', featured: true },
-  { when: '2022', title: 'Junior Computer Hardware Technician', school: 'CTEVT, 60-day training in PC assembly and troubleshooting' },
-  { when: '2021', title: 'Secondary Education Examination', school: 'Shree Saraswati Secondary School, Jamunbari', grade: 'A+' },
+// Newest first. `stat` is the large figure shown beside the list while a row is hovered.
+export const education: { when: string; title: string; school: string; tag: string; stat: { value: string; label: string } }[] = [
+  { when: '2024', title: 'Diploma in IT Engineering', school: 'Kankai Polytechnic Institute, Durgapur, Jhapa', tag: 'Grade A', stat: { value: 'A', label: 'Grade in the Diploma in IT Engineering' } },
+  { when: '2022', title: 'Junior Computer Hardware Technician', school: 'CTEVT, 60-day training in PC assembly and troubleshooting', tag: 'Training', stat: { value: '60', label: 'Days of hands-on CTEVT hardware training' } },
+  { when: '2021', title: 'Secondary Education Examination', school: 'Shree Saraswati Secondary School, Jamunbari', tag: 'Grade A+', stat: { value: 'A+', label: 'Grade in the Secondary Education Examination' } },
 ];
 
-// Each tool name must have a logo in src/components/Logo.astro.
-export const skillGroups: { name: string; note: string; tools: string[]; wide?: boolean }[] = [
-  { name: 'Frontend', note: 'Interfaces people use every day', tools: ['React', 'TypeScript', 'JavaScript', 'Tailwind CSS', 'shadcn/ui'], wide: true },
-  { name: 'Backend', note: 'Data, auth and storage', tools: ['Supabase', 'PostgreSQL'] },
-  { name: 'Workflow', note: 'How I build and ship', tools: ['Git', 'GitHub', 'Claude Code', 'GitHub Copilot'], wide: true },
+// Each tool name must be known to src/components/Logo.astro. Every fact is true of KhataERP's code.
+export const skillGroups: { name: string; note: string; tools: string[]; facts: string[] }[] = [
+  {
+    name: 'Frontend',
+    note: 'Interfaces people use every day',
+    tools: ['React', 'TypeScript', 'JavaScript', 'React Router', 'Zustand', 'Tailwind CSS', 'shadcn/ui'],
+    facts: ['React 19 with React Router 7 and Zustand for app state', 'Keyboard-first voucher entry with shortcuts for daily billing'],
+  },
+  {
+    name: 'Backend',
+    note: 'Data, auth and storage',
+    tools: ['Supabase', 'PostgreSQL'],
+    facts: [
+      'Supabase Auth and Row-Level Security keep each company’s data separate',
+      'Double-entry enforced in PostgreSQL: an unbalanced voucher cannot be saved',
+      '45 SQL migrations and an Edge Function for automated backups',
+    ],
+  },
+  {
+    name: 'Workflow',
+    note: 'How I build, test and ship',
+    tools: ['Vite', 'Vitest', 'Vercel', 'Git', 'GitHub', 'Claude Code', 'GitHub Copilot'],
+    facts: ['65 Vitest test files, including accounting-integrity checks', 'Built with Vite and deployed on Vercel'],
+  },
 ];
+
+// Two years as a senior accountant, built into KhataERP
+export const domain = ['Double-entry accounting', 'Nepali Bikram Sambat dates', 'VAT and PAN workflows', 'Rupees in lakh and crore'];
 
 export const languages = [
   { native: 'नेपाली', name: 'Nepali' },

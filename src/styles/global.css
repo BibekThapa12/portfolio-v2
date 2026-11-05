@@ -174,13 +174,13 @@ section { padding-block: 112px; border-top: 1px solid var(--border); }
 }
 @keyframes marquee { to { transform: translateX(calc(-50% - 24px)); } }
 
-.bento { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-.tile { display: flex; flex-direction: column; min-height: 220px; padding: 28px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--card); transition: border-color .25s, transform .3s var(--ease); }
+/* Cards in a row share one height; content stays packed at the top, so spare room only ever shows at a card's foot */
+.bento { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.tile { display: flex; flex-direction: column; padding: 28px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--card); transition: border-color .25s, transform .3s var(--ease); }
 .tile:hover { border-color: var(--border-strong); transform: translateY(-2px); }
-.tile.wide { grid-column: span 2; }
 .tile h3 { font-size: 1.25rem; }
-.tile .note { color: var(--muted); margin: 4px 0 24px; }
-.logos { list-style: none; margin: auto 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
+.tile .note { color: var(--muted); margin: 4px 0 20px; }
+.logos { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
 .logos .logo { padding: 10px 14px 10px 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-subtle); font-size: 14px; font-weight: 500; transition: border-color .2s, transform .25s var(--ease); }
 .logos .logo:hover { border-color: var(--border-strong); transform: translateY(-3px) rotate(-2deg); }
 .logos .logo:hover svg { transform: scale(1.15) rotate(-8deg); }
@@ -188,31 +188,86 @@ section { padding-block: 112px; border-top: 1px solid var(--border); }
 .logo { display: inline-flex; align-items: center; gap: 10px; white-space: nowrap; }
 .logo svg { width: 22px; height: 22px; fill: currentColor; transition: fill .25s; }
 .logo:hover svg, .tile:hover .logos svg { fill: var(--brand); }
-.langs { list-style: none; margin: auto 0 0; padding: 0; display: grid; gap: 6px; }
-.langs li { display: flex; align-items: baseline; gap: 10px; }
-.langs span { font-size: 1.625rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; }
-.langs small { font-size: 14px; color: var(--muted); }
+/* What each group has done in KhataERP, set under its tools */
+.facts { list-style: none; margin: 22px 0 0; padding: 18px 0 0; border-top: 1px solid var(--border); display: grid; gap: 8px; }
+.facts li { position: relative; padding-left: 18px; color: var(--muted); font-size: 15px; line-height: 1.5; }
+.facts li::before { content: ""; position: absolute; left: 2px; top: .62em; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.domain { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.domain li { font-size: 1.25rem; font-weight: 500; letter-spacing: -0.015em; }
+/* Languages: one even line, every entry the same size, each with its English name */
+.langs { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 32px; margin: 32px 0 0; }
+.langs-label { color: var(--muted); font-size: 15px; }
+.lang { font-size: 1.125rem; font-weight: 500; }
+/* GitHub activity: 53 week columns of 7 days; phones scroll it sideways rather than shrinking the squares */
+.gh { gap: 20px; }
+.gh:hover { transform: none; }
+.gh-scroll { overflow-x: auto; scrollbar-width: thin; padding-bottom: 4px; }
+.gh-months, .gh-grid { display: grid; grid-template-columns: repeat(53, minmax(11px, 1fr)); gap: 4px; min-width: 760px; }
+.gh-months { height: 20px; font-size: 13px; color: var(--muted); }
+.gh-months span { white-space: nowrap; }
+.gh-grid { grid-template-rows: repeat(7, auto); grid-auto-flow: column; }
+.gh-grid i, .gh-legend i { display: block; aspect-ratio: 1; border-radius: 3px; background: var(--border); }
+.gh-grid i.blank { background: none; }
+/* GitHub's own greens, so the calendar reads as GitHub at a glance */
+.gh { --gh1: #9be9a8; --gh2: #40c463; --gh3: #30a14e; --gh4: #216e39; }
+@media (prefers-color-scheme: dark) { .gh { --gh1: #0e4429; --gh2: #006d32; --gh3: #26a641; --gh4: #39d353; } }
+.gh i[data-l="1"] { background: var(--gh1); }
+.gh i[data-l="2"] { background: var(--gh2); }
+.gh i[data-l="3"] { background: var(--gh3); }
+.gh i[data-l="4"] { background: var(--gh4); }
+.gh-grid i[title]:hover { outline: 1px solid var(--fg); outline-offset: 1px; }
+.gh-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.gh-legend { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; color: var(--muted); }
+.gh-legend i { width: 11px; }
+.gh.is-error .gh-scroll, .gh.is-error .gh-legend { display: none; }
+.lang small { margin-left: 8px; font-size: 14px; font-weight: 400; color: var(--muted); }
 
-/* Education: one featured card, each with its year set large */
-.edu-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 16px; }
-.edu-card { display: flex; flex-direction: column; gap: 28px; padding: 28px; min-height: 260px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--card); transition: border-color .25s, transform .3s var(--ease); }
-.edu-card:hover { border-color: var(--border-strong); transform: translateY(-2px); }
-.edu-year { font-size: clamp(3rem, 2rem + 3vw, 4.5rem); font-weight: 600; letter-spacing: -0.05em; line-height: .9; color: var(--border-strong); font-variant-numeric: tabular-nums; transition: color .35s; }
-.edu-card:hover .edu-year { color: var(--accent); }
-.edu-card.featured .edu-year { color: var(--fg); }
-.edu-body { margin-top: auto; }
-.edu-body h3 { font-size: 1.1875rem; }
-.edu-card.featured h3 { font-size: 1.5rem; }
-.edu-body p { color: var(--muted); margin: 6px 0 0; }
-.edu-meta:empty { display: none; }
-.grade { display: inline-block; margin-top: 8px; font-size: 13px; font-weight: 600; padding: 3px 10px; border-radius: 999px; color: var(--accent); border: 1px solid currentColor; }
+/* Education: a ledger. Heading and a large figure on the left, one row per qualification on the right */
+.edu { display: grid; grid-template-columns: minmax(0, 380px) minmax(0, 1fr); gap: 80px; align-items: start; }
+.edu-side { position: sticky; top: 104px; }
+.edu-stat { margin-top: 56px; }
+.edu-stat-value { display: block; font-size: clamp(5rem, 3rem + 6vw, 8.5rem); font-weight: 600; letter-spacing: -0.06em; line-height: .85; color: var(--fg); font-variant-numeric: tabular-nums; }
+.edu-stat-label { display: block; margin-top: 16px; max-width: 24ch; color: var(--muted); }
+.edu-rows { list-style: none; margin: 0; padding: 0; }
+/* each row draws its own top line (scaleX in motion.ts); the last row closes the list */
+.edu-row { position: relative; display: grid; grid-template-columns: 96px minmax(0, 1fr) auto; gap: 28px; align-items: baseline; padding: 28px 20px; margin-inline: -20px; border-radius: 14px; transition: background .3s; }
+.edu-row::before, .edu-row:last-child::after { content: ""; position: absolute; left: 20px; right: 20px; height: 1px; background: var(--border-strong); transform-origin: left; transform: scaleX(var(--line, 1)); }
+.edu-row::before { top: 0; }
+.edu-row:last-child::after { bottom: 0; }
+.edu-year { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.03em; color: var(--muted); font-variant-numeric: tabular-nums; transition: color .3s; }
+.edu-main { transition: transform .4s var(--ease); }
+.edu-main h3 { font-size: 1.25rem; }
+.edu-main p { color: var(--muted); margin: 6px 0 0; }
+.edu-tag { font-size: 14px; font-weight: 500; color: var(--muted); white-space: nowrap; padding: 4px 12px; border-radius: 999px; transition: color .3s, background .3s; }
+.edu-row:is(:hover, .is-active) { background: var(--card); }
+.edu-row:is(:hover, .is-active) .edu-year { color: var(--fg); }
+.edu-row:is(:hover, .is-active) .edu-main { transform: translateX(6px); }
+.edu-row:is(:hover, .is-active) .edu-tag { color: var(--accent); background: var(--glow); }
+
+/* Contact: the pitch on the left, a compose window on the right that opens the visitor's mail app */
+.contact { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 560px); gap: 72px; align-items: center; }
+.compose { position: relative; border: 1px solid var(--border-strong); border-radius: 16px; background: var(--card); overflow: hidden; transition: border-color .3s, box-shadow .3s; }
+.compose:focus-within { border-color: var(--accent); box-shadow: 0 0 0 4px var(--glow); }
+.compose-bar { display: flex; align-items: center; gap: 7px; height: 40px; padding: 0 14px; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--muted); }
+.compose-bar i { width: 10px; height: 10px; border-radius: 50%; background: var(--border-strong); }
+.compose-bar span { margin-left: 8px; }
+.compose-field { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 14px; margin: 0; padding: 12px 18px; border: 0; border-bottom: 1px solid var(--border); font-size: 15px; min-width: 0; }
+.compose-field > span, .compose-field legend { width: 60px; color: var(--muted); }
+.compose-field legend { float: left; padding: 0; margin-right: 14px; }
+.compose-field b { font-weight: 500; overflow-wrap: anywhere; }
+.compose-reason label { cursor: pointer; }
+.compose-reason input { position: absolute; opacity: 0; pointer-events: none; }
+.compose-reason label span { display: inline-block; font-size: 13px; font-weight: 500; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--border-strong); color: var(--muted); transition: background .2s, color .2s, border-color .2s, transform .2s var(--ease); }
+.compose-reason label:hover span { color: var(--fg); border-color: var(--fg); }
+.compose-reason input:checked + span { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.compose-reason input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+.compose-reason input:active + span { transform: scale(.95); }
+.compose textarea { display: block; width: 100%; min-height: 150px; padding: 16px 18px; border: 0; resize: vertical; background: transparent; color: var(--fg); font: inherit; line-height: 1.55; outline: none; caret-color: var(--accent); }
+.compose textarea::placeholder { color: var(--muted); }
+.compose-foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 0 18px 18px; }
+.compose-hint { font-size: 14px; color: var(--muted); }
+.compose-hint.is-sent { color: var(--accent); }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-
-/* Contact */
-.cta { text-align: center; border: 1px solid var(--border); border-radius: 28px; padding: 88px 24px; background: var(--bg-subtle); position: relative; isolation: isolate; overflow: hidden; }
-.cta::before { content: ""; position: absolute; left: 20%; right: 20%; top: -40%; height: 120%; z-index: -1; background: radial-gradient(closest-side, var(--glow), transparent); pointer-events: none; }
-.cta .lead { margin-inline: auto; }
-.cta .actions { justify-content: center; }
 footer { padding: 40px 0 48px; }
 footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 14px; color: var(--muted); }
 footer a { color: var(--muted); text-decoration: none; }
@@ -264,15 +319,23 @@ footer span { display: flex; gap: 20px; }
   .hero { grid-template-columns: 1fr; gap: 24px; padding-top: 56px; }
   #experience .wrap { grid-template-columns: 1fr; gap: 0; }
   #experience .section-head { position: static; }
-  .bento, .edu-grid { grid-template-columns: 1fr; }
-  .tile.wide { grid-column: auto; }
-  .tile, .edu-card { min-height: 0; }
+  .bento { grid-template-columns: 1fr; }
+  /* Education: one column; the large figure is a desktop extra */
+  .edu { grid-template-columns: 1fr; gap: 0; }
+  .edu-side { position: static; }
+  .edu-stat { display: none; }
+  .edu-row { grid-template-columns: 64px minmax(0, 1fr); gap: 12px 16px; padding: 22px 12px; margin-inline: -12px; }
+  .edu-row:is(:hover, .is-active) .edu-main { transform: none; }
+  .edu-row::before, .edu-row:last-child::after { left: 12px; right: 12px; }
+  .edu-year { font-size: 1.125rem; }
+  .edu-tag { grid-column: 2; justify-self: start; padding: 2px 10px; margin-left: -10px; }
   .monogram { max-width: 440px; justify-self: center; width: 100%; }
   section { padding-block: 80px; }
   .project { grid-template-columns: 1fr; }
   .project .browser { order: -1; margin: 20px 20px 0; }
   .project .about { padding: 28px 24px; }
-  .cta { padding: 64px 20px; }
+  .contact { grid-template-columns: 1fr; gap: 40px; }
+  .compose-field > span, .compose-field legend { width: auto; }
   .nav span { gap: 16px; }
 }
 @media (max-width: 520px) {

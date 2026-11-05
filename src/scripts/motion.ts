@@ -25,12 +25,13 @@ mm.add('(prefers-reduced-motion: no-preference)', () => {
   });
 
 
-  // Education years count up to themselves when the cards arrive
+  // Education: each row's line draws in from the left, then the years count up
+  gsap.fromTo('.edu-row', { '--line': 0 }, { '--line': 1, duration: 0.9, ease: 'power2.out', stagger: 0.15, scrollTrigger: { trigger: '.edu-rows', start: 'top 80%', once: true } });
   gsap.utils.toArray<HTMLElement>('.edu-year').forEach((el) => {
     const to = Number(el.textContent);
     const n = { v: to - 24 };
     el.textContent = String(n.v);
-    gsap.to(n, { v: to, duration: 1.4, ease: 'power3.out', snap: { v: 1 }, onUpdate: () => { el.textContent = String(n.v); }, scrollTrigger: { trigger: el, start: 'top 85%', once: true } });
+    gsap.to(n, { v: to, duration: 1.4, ease: 'power3.out', snap: { v: 1 }, onUpdate: () => { el.textContent = String(n.v); }, scrollTrigger: { trigger: '.edu-rows', start: 'top 80%', once: true } });
   });
 
   // Journey: the rail fills as you scroll through it and each step lights up as the fill reaches it.
@@ -97,6 +98,24 @@ mm.add('(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-prefe
 
   return () => [...handlers, ...spotHandlers, ...magnets].forEach((off) => off());
 });
+
+// Education: hovering or focusing a row shows its figure large beside the list
+const stat = document.querySelector<HTMLElement>('.edu-stat');
+const rows = gsap.utils.toArray<HTMLElement>('.edu-row');
+if (stat && rows.length) {
+  const value = stat.querySelector<HTMLElement>('.edu-stat-value')!;
+  const label = stat.querySelector<HTMLElement>('.edu-stat-label')!;
+  const still = matchMedia('(prefers-reduced-motion: reduce)');
+  const show = (row: HTMLElement) => {
+    rows.forEach((r) => r.classList.toggle('is-active', r === row));
+    if (value.textContent === row.dataset.stat) return;
+    const swap = () => { value.textContent = row.dataset.stat!; label.textContent = row.dataset.statLabel!; };
+    if (still.matches) return swap();
+    gsap.timeline().to([value, label], { opacity: 0, y: -12, duration: 0.15, ease: 'power2.in', onComplete: swap }).fromTo([value, label], { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.45, ease: 'power3.out', stagger: 0.05 });
+  };
+  rows.forEach((row) => { row.tabIndex = 0; row.addEventListener('pointerenter', () => show(row)); row.addEventListener('focus', () => show(row)); });
+  rows[0].classList.add('is-active');
+}
 
 // Trigger positions depend on the web font's metrics
 document.fonts.ready.then(() => ScrollTrigger.refresh());

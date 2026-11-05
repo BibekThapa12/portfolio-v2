@@ -19,17 +19,23 @@ const slugs: Record<string, keyof typeof icons> = {
   GitHub: 'siGithub',
   'Claude Code': 'siClaude',
   'GitHub Copilot': 'siGithubcopilot',
+  'React Router': 'siReactrouter',
+  Vite: 'siVite',
+  Vitest: 'siVitest',
+  Vercel: 'siVercel',
 };
+// tools Simple Icons has no logo for; they show as a name only
+const textOnly = new Set(['Zustand']);
 
 const { name, label = true } = Astro.props;
 const icon = icons[slugs[name]] as { path: string; hex: string } | undefined;
-if (!icon) throw new Error(`No logo for "${name}"`);
+if (!icon && !textOnly.has(name)) throw new Error(`No logo for "${name}"`);
 // near-black brand colours would vanish in dark mode, so those fall back to the text colour
-const [r, g, b] = [0, 2, 4].map((i) => parseInt(icon.hex.slice(i, i + 2), 16));
-const brand = r * 0.299 + g * 0.587 + b * 0.114 < 60 ? 'var(--fg)' : `#${icon.hex}`;
+const [r, g, b] = [0, 2, 4].map((i) => parseInt(icon?.hex.slice(i, i + 2) ?? '0', 16));
+const brand = !icon || r * 0.299 + g * 0.587 + b * 0.114 < 60 ? 'var(--fg)' : `#${icon.hex}`;
 ---
 
 <span class="logo" style={`--brand: ${brand}`}>
-  <svg viewBox="0 0 24 24" aria-hidden="true"><path d={icon.path} /></svg>
+  {icon && <svg viewBox="0 0 24 24" aria-hidden="true"><path d={icon.path} /></svg>}
   {label && <span>{name}</span>}
 </span>
